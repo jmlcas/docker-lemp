@@ -1,3 +1,2 @@
-FROM mysql:5.7
+FROM mariadb:10.5
 
-LABEL maintainer="Mayko Kioschi <mkioschi@gmail.com>"

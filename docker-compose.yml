@@ -4,11 +4,9 @@ services:
 
     nginx:
         container_name: nginx
-        build:
-            context: ./etc/nginx
-            dockerfile: Dockerfile
+        image: nginx:1.21
         ports:
-            - "80:80"
+            - "8200:80"
         restart: always
         volumes:
             - ./src/public:/var/www/html
@@ -20,9 +18,7 @@ services:
             
     php-fpm:
         container_name: php-fpm
-        build:
-            context: ./etc/php-fpm
-            dockerfile: Dockerfile
+        image: php:8.0-fpm
         expose:
             - "9000"
         restart: always
@@ -30,12 +26,10 @@ services:
             - ./src/public:/var/www/html
             
     mysql:
-        container_name: mariadb:10.5
-        build:
-            context: ./etc/mysql
-            dockerfile: Dockerfile
-        ports:
-            - "3306:3306"
+        container_name: mysql
+        image: mariadb:10.5
+        expose:
+            - 3306
         restart: always
         volumes:
             - ./data/mysql:/var/lib/mysql
@@ -44,9 +38,7 @@ services:
             
     phpmyadmin:
         container_name: phpmyadmin
-        build:
-            context: ./etc/phpmyadmin
-            dockerfile: Dockerfile
+        image: phpmyadmin/phpmyadmin
         ports:
             - "8080:80"
         restart: always

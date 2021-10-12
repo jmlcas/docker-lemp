@@ -1,37 +1,52 @@
-version: "3"
-
+version: '3'
 services:
-
-  web:
-    container_name: web
-    image: ifpb/php:7.3-apache-pdo
-    build: .
-    ports:
-      - "8080:80"
-    volumes:
-      - ./src/:/var/www/html/
-    depends_on:
-      - mysql
-
-  mysql:
-    container_name: mysql
-    image: mysql:8.0
-    command:
-      - --default-authentication-plugin=mysql_native_password
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    expose:
-      - 3306
-
-  adminer:
-    container_name: adminer
-    image: adminer:4.7.5
-    restart: always
-    ports:
-      - 8081:8080
-    depends_on:
-      - mysql
-
+    nginx:
+        container_name: nginx
+        build:
+            context: ./etc/nginx
+            dockerfile: Dockerfile
+        ports:
+            - "80:80"
+        restart: always
+        volumes:
+            - ./src/public:/var/www/html
+            - ./etc/nginx/logs/:/var/log/nginx/
+            - ./etc/nginx/sites-enabled/:/etc/nginx/conf.d/
+        depends_on:
+            - php-fpm
+            - mysql
+    php-fpm:
+        container_name: php-fpm
+        build:
+            context: ./etc/php-fpm
+            dockerfile: Dockerfile
+        expose:
+            - "9000"
+        restart: always
+        volumes:
+            - ./src/public:/var/www/html
+    mysql:
+        container_name: mysql
+        build:
+            context: ./etc/mysql
+            dockerfile: Dockerfile
+        ports:
+            - "3306:3306"
+        restart: always
+        volumes:
+            - ./data/mysql:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+    phpmyadmin:
+        container_name: phpmyadmin
+        build:
+            context: ./etc/phpmyadmin
+            dockerfile: Dockerfile
+        ports:
+            - "8080:80"
+        restart: always
+        depends_on:
+            - mysql
+        environment:
+            PMA_ARBITRARY: 1
+            PMA_HOST: mysql

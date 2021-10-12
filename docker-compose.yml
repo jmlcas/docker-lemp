@@ -1,5 +1,7 @@
 version: '3'
+
 services:
+
     nginx:
         container_name: nginx
         build:
@@ -15,6 +17,7 @@ services:
         depends_on:
             - php-fpm
             - mysql
+            
     php-fpm:
         container_name: php-fpm
         build:
@@ -25,8 +28,9 @@ services:
         restart: always
         volumes:
             - ./src/public:/var/www/html
+            
     mysql:
-        container_name: mysql
+        container_name: mariadb:10.5
         build:
             context: ./etc/mysql
             dockerfile: Dockerfile
@@ -37,6 +41,7 @@ services:
             - ./data/mysql:/var/lib/mysql
         environment:
             MYSQL_ROOT_PASSWORD: root
+            
     phpmyadmin:
         container_name: phpmyadmin
         build:
@@ -50,3 +55,4 @@ services:
         environment:
             PMA_ARBITRARY: 1
             PMA_HOST: mysql
+            

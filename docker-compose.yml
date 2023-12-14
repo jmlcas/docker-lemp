@@ -6,7 +6,8 @@ services:
         container_name: nginx
         image: nginx:1.21
         ports:
-            - "8200:80"
+            - "80:80"
+            - "443:443"
         restart: always
         volumes:
             - ./src/public:/var/www/html
